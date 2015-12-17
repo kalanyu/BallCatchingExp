@@ -5,12 +5,12 @@
 //  Copyright 2015年 Tokyo Institute of Techonology. All rights reserved.
 //
 
-#ifndef Drawable_Ball_h
-#define Drawable_Ball_h
+#ifndef Drawable_Cylinder_h
+#define Drawable_Cylinder_h
 
 #include "DrawableObject.h"
 
-class Drawable_Ball : public DrawableObject {
+class Drawable_Cylinder : public DrawableObject {
 
 private:
   double radius;
