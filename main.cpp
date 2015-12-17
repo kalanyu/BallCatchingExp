@@ -169,15 +169,15 @@ static void displayGL()
     glLightfv(GL_LIGHT0, GL_POSITION, POS_light0);
     glLightfv(GL_LIGHT1, GL_POSITION, POS_light1);
 
-    pos_ball = draobj_cylinder->getPos();
+    pos_ball = drawobj_cylinder->getPos();
     pos_hand = drawobj_hand->getPos();
     pos_ball[1] = (float)world->getHeightBall();
     pos_hand[1] = (float)world->getHeightHand();
-    draobj_cylinder->setPos(pos_ball);
+    drawobj_cylinder->setPos(pos_ball);
     drawobj_hand->setPos(pos_hand);
 
 	if(world->isBallDisplay()){
-		draobj_cylinder->draw();
+		drawobj_cylinder->draw();
 	}
 	if(world->isHandDisplay()){
 		drawobj_hand->draw();
@@ -242,9 +242,9 @@ static void initClassInstances(void)
 */
 	world = new World();
 
-	draobj_cylinder = new Drawable_Cylinder();
-	draobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
-	draobj_cylinder->setRadius(Radius_ball);
+	drawobj_cylinder = new Drawable_Cylinder();
+	drawobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
+	drawobj_cylinder->setRadius(Radius_ball);
 
 	drawobj_base = new Drawable_Line();
 	drawobj_base->setColor(CLR_baseline[0],CLR_baseline[1],CLR_baseline[2]);
@@ -525,7 +525,7 @@ void endProc()
 	delete obj::msjoint;
 	delete obj::msjoint_stiff;
 	delete world;
-	delete draobj_cylinder;
+	delete drawobj_cylinder;
 	delete drawobj_base;
 	delete drawobj_hand;
 	delete coordinator;
