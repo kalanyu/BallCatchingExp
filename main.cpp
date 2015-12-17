@@ -185,6 +185,7 @@ static void displayGL()
 
 	drawobj_base->draw();
 
+	glFlush();
     glutSwapBuffers();
 }
 
@@ -243,8 +244,8 @@ static void initClassInstances(void)
 	world = new World();
 
 	drawobj_cylinder = new Drawable_Cylinder();
-	drawobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
-	drawobj_cylinder->setRadius(Radius_ball);
+	// drawobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
+	// drawobj_cylinder->setRadius(Radius_ball);
 
 	drawobj_base = new Drawable_Line();
 	drawobj_base->setColor(CLR_baseline[0],CLR_baseline[1],CLR_baseline[2]);
