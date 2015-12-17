@@ -47,9 +47,11 @@ void Drawable_Cylinder::draw()
 {
     glPushMatrix();
 
-    glTranslated(pos[0], pos[1], pos[2]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
-    gluCylinder(quadric, 0.1f, 0.1f, 10, 32, 32);
+    // glTranslated(pos[0], pos[1], pos[2]);
+    // glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
+    GLUquadricObj *p = gluNewQuadric();
+    gluQuadricDrawStyle(GLU_FILL);
+    gluCylinder(p, 30, 30, 100, 32, 32);
 
     glPopMatrix();
 }
@@ -68,5 +70,5 @@ double Drawable_Cylinder::getRadius()
 
 Drawable_Cylinder::~Drawable_Cylinder()
 {
-  gluDeleteQuadric(quadric);
+  //gluDeleteQuadric(quadric);
 }
