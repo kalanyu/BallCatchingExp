@@ -23,6 +23,7 @@ public:
   Drawable_Cylinder(float newr, float newg, float newb, vector<float> newpos);
   Drawable_Cylinder(const float newcolor[], vector<float> newpos);
   Drawable_Cylinder();
+  ~Drawable_Cylinder();
   void draw();
   void setRadius(double newradius);
   void setHeight(double newheight);
