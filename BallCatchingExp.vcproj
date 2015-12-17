@@ -177,6 +177,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Drawable_Cylinder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Drawable_Cylinder.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Drawable_Line.cpp"
 				>
 			</File>

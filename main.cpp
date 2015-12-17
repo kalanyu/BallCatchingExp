@@ -11,6 +11,7 @@ using namespace std;
 #include "ControlContec.h"
 #include "World.h"
 #include "Drawable_Cylinder.h"
+#include "Drawable_Ball.h"
 #include "Drawable_Line.h"
 #include "ExperimentCoordinator.h"
 #include "ConstParameters.h"
