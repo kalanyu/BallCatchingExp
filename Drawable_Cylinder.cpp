@@ -18,7 +18,7 @@ Drawable_Cylinder::Drawable_Cylinder(float newr, float newg, float newb, vector<
 {
     radius = default_radius;
     quadric = gluNewQuadric();
-    gluQuadricNormals(quardric, GL_TRUE);
+    gluQuadricNormals(quadric, GL_TRUE);
 }
 
 
@@ -27,7 +27,7 @@ Drawable_Cylinder::Drawable_Cylinder(const float newcolor[], vector<float> newpo
 {
     radius = default_radius;
     quadric = gluNewQuadric();
-    gluQuadricNormals(quardric, GL_TRUE);
+    gluQuadricNormals(quadric, GL_TRUE);
 }
 
 
@@ -36,7 +36,7 @@ Drawable_Cylinder::Drawable_Cylinder()
 {
     radius = default_radius;
     quadric = gluNewQuadric();
-    gluQuadricNormals(quardric, GL_TRUE);
+    gluQuadricNormals(quadric, GL_TRUE);
 }
 
 
@@ -44,20 +44,23 @@ void Drawable_Cylinder::draw()
 {
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-  float radiusBase = 2;
-  float radiusTop = 2;
-  float height = 2;
+  float radiusBase = 0.035;
+  float radiusTop = 0.035;
+  float height = 0.08;
   float slices = 20;
   float stacks = 20;
 
   glPushMatrix();
-  glTranslatef(1.5, 0.0, 0.0);
-  // glRotatef(-90.0, 1.0, 0.0, 0.0);
+  //glTranslatef(1.5, 0.0, 0.0);
+  glTranslated(pos[0], pos[1], pos[2]);
+  glRotated(-90.0, 1.0, 0.0, 0.0);
   glColor3f(1.0, 0.2, 0.2);	// Reddish color
   gluCylinder(quadric, radiusBase, radiusTop, height, slices, stacks);
-    // Draw the top disk cap
+ 
+  // Draw the top disk cap
   glPushMatrix();
-  glTranslated(0.0, 0.0, height);
+  glTranslated(pos[0], pos[1], pos[2]);
+  //glTranslated(0.0, 0.0, height);
   gluDisk(quadric, 0.0, radiusTop, slices, stacks);
   glPopMatrix();
 
