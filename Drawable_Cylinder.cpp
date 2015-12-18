@@ -12,6 +12,7 @@ const int Drawable_Cylinder::Nstacks = 20;
 
 const double default_radius = 0.05;
 
+
 Drawable_Cylinder::Drawable_Cylinder(float newr, float newg, float newb, vector<float> newpos)
 :DrawableObject(newr,newg,newb,newpos)
 {
@@ -19,6 +20,7 @@ Drawable_Cylinder::Drawable_Cylinder(float newr, float newg, float newb, vector<
     quadric = gluNewQuadric();
     gluQuadricNormals(quadric, GL_TRUE);
 }
+
 
 Drawable_Cylinder::Drawable_Cylinder(const float newcolor[], vector<float> newpos)
 :DrawableObject(newcolor,newpos)
@@ -28,6 +30,7 @@ Drawable_Cylinder::Drawable_Cylinder(const float newcolor[], vector<float> newpo
     gluQuadricNormals(quadric, GL_TRUE);
 }
 
+
 Drawable_Cylinder::Drawable_Cylinder()
 :DrawableObject()
 {
@@ -35,6 +38,7 @@ Drawable_Cylinder::Drawable_Cylinder()
     quadric = gluNewQuadric();
     gluQuadricNormals(quadric, GL_TRUE);
 }
+
 
 void Drawable_Cylinder::draw()
 {
@@ -69,10 +73,12 @@ void Drawable_Cylinder::draw()
   glPopMatrix();
 }
 
+
 void Drawable_Cylinder::setRadius(double newradius)
 {
     radius = newradius;
 }
+
 
 double Drawable_Cylinder::getRadius()
 {
