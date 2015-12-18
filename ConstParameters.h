@@ -54,8 +54,8 @@ static const float POS_light1[] = {0.0f, 0.0f, -3.0f, 1.0f};
 static const float CLR_light1[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 // Radius and Color of ball
-static const double Radius_ball = 0.02;  // [m]
-static const float CLR_ball[]  = {1.0f, 0.0f, 0.0f, 1.0f};
+static const double Radius_ball = 0.2;  // [m]
+static const float CLR_ball[]  = {1.0f, 1.0f, 0.0f, 1.0f};
 
 // Size and Color of column
 static const double Base_Radius_column = 0.02;	// [m]

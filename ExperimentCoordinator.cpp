@@ -5,6 +5,7 @@
 #include <direct.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string>
 using namespace std;
 
 
@@ -280,10 +281,10 @@ void ExperimentCoordinator::startTrial(World *world, ControlContec *contec)
 	this->set_tms_before(0);
 	this->set_tms_after(0);
 	if(1){
-		this->setFlagDecisionRequired(false);
+		this->setFlagDecisionRequired(true);
 		this->setIndexDecision(0);
 	}else{
-		this->setFlagDecisionRequired(true);
+		this->setFlagDecisionRequired(false);
 	}
 	this->set_tms_before(0);
 	this->set_tms_after(0);
@@ -468,17 +469,32 @@ void ExperimentState_AfterTrial::determineState(ExperimentCoordinator *coordinat
 		if(contec->isCalicurating()){
 			contec->CalculateDynamicsStop();
 		}
-		if( !coordinator->isDecisionRequired() || coordinator->isDecisionMade() ) {
+		if( !coordinator->isDecisionRequired() || (coordinator->isDecisionMade() || (coordinator->getIndexCurrentTrial() %2 != 0)) ) {
 			coordinator->writeTrialData(world);
 			if( coordinator->getIndexCurrentTrial() == coordinator->getTotalTrialNumber() ) {	// end of experiment
 				coordinator->setFlagAfterTrial(false);
 				coordinator->setFlagExperimentFinished(true);
 				world->offForce();
 				coordinator->setStateNull();
-			}else{																				// go to next trial
+			}else{	
+				/*
+				if(coordinator->getIndexCurrentTrial() % 2 == 0) {
+					string tmp_str;
+					cout << "Trial ended" << endl;
+					cin >> tmp_str;
+					while (tmp_str.compare("a") != 0) {
+						cout << "Trial ended" << endl;
+						cin >> tmp_str;
+					}
+				} 
+				*/
+				// go to next trial
 				coordinator->setIndexCurrentTrial(coordinator->getIndexCurrentTrial()+1);
 				coordinator->setFlagAfterTrial(false);
 				coordinator->startTrial(world, contec);
+				
+			
+				//sprintf_s(fname_condition, "%s", tmp_str.c_str());
 			}
 		}
 	}

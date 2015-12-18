@@ -488,7 +488,7 @@ void WorldState_Falling::determineState(World *world)
     double tmp_h_ball_bottom = world->getHeightBall() - world->getRadiusBall();
     double tmp_h_hand_top = world->getHeightHand() + world->getThickHand() / 2;
     if (tmp_h_ball_bottom <= tmp_h_hand_top) {
-        world->setHeightBall(tmp_h_hand_top + 2);
+		world->setHeightBall(tmp_h_hand_top + world->getRadiusBall());
         world->setTimeContact(world->getTimeCurrent());
 		//triger->triger_on();
         world->setState(new WorldState_Fallen());
@@ -531,9 +531,9 @@ void WorldState_Fallen::step(World *world, double dtms, ControlContec *contec)
 	//
 	// set height of ball synchronized with height of hand
 	//
-    double tmp_h = world->getHeightHand() + world->getThickHand()/2 + world->getRadiusBall();
+    double tmp_h = world->getHeightHand() + world->getThickHand()/2;
     world->setHeightBall(tmp_h);
-
+	//world->setHeightBall(0.5);
 	//
 	// load force if condition is satisfied
 	//
@@ -564,7 +564,7 @@ void WorldState_Fallen::determineState(World *world)
 	double tmp_t;
 	if(world->isLoading()){
 		tmp_t = world->getTimeCurrent() - world->getTimeLoadOnset();
-		if (tmp_t>1000) {
+		if (tmp_t>3000) {
 				world->setHeightBall(1.0);
 				world->offForce();
 				world->setFlagFinished(true);
@@ -694,7 +694,6 @@ void WorldState_ConstIntervalForcePerturbation::step(World *world, double dtms, 
 	if(!world->isLoading() && tmp_t>=Interval_force){
 			world->onForce();
 	}
-
 	// 筋活性度の指標を更新
 	world->updateMuscle(contec);
 

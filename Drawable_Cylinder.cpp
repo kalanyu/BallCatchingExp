@@ -42,7 +42,7 @@ Drawable_Cylinder::Drawable_Cylinder()
 
 void Drawable_Cylinder::draw()
 {
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   float radiusBase = 0.035;
   float radiusTop = 0.035;
@@ -54,7 +54,8 @@ void Drawable_Cylinder::draw()
   //glTranslatef(1.5, 0.0, 0.0);
   glTranslated(pos[0], pos[1], pos[2]);
   glRotated(-90.0, 1.0, 0.0, 0.0);
-  glColor3f(1.0, 0.2, 0.2);	// Reddish color
+  glColor3ub(1.0, 0.2, 0.2);	// Reddish color
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
   gluCylinder(quadric, radiusBase, radiusTop, height, slices, stacks);
  
   // Draw the top disk cap

@@ -160,11 +160,11 @@ static void displayGL()
 	vector<float> pos_ball;
     vector<float> pos_hand;
 
-	if ( coordinator->isAfterTrial() && coordinator->isDecisionRequired() ) {
+	//if ( coordinator->isAfterTrial() && coordinator->isDecisionRequired() ) {
 		glClearColor(CLR_screen_decision[0], CLR_screen_decision[1], CLR_screen_decision[2], CLR_screen_decision[3]);
-	} else {
-	    glClearColor(CLR_screen[0], CLR_screen[1], CLR_screen[2], CLR_screen[3]);
-	}
+	//} else {
+	//    glClearColor(CLR_screen[0], CLR_screen[1], CLR_screen[2], CLR_screen[3]);
+	//}
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLightfv(GL_LIGHT0, GL_POSITION, POS_light0);
@@ -245,7 +245,7 @@ static void initClassInstances(void)
 	world = new World();
 
 	drawobj_cylinder = new Drawable_Cylinder();
-	// drawobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
+	drawobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
 	// drawobj_cylinder->setRadius(Radius_ball);
 
 	drawobj_base = new Drawable_Line();
@@ -345,7 +345,7 @@ static int initSPIDAR(void)
 
 void mouse(int button, int state, int x, int y)
 {
-    if (coordinator->isAfterTrial() & coordinator->isDecisionRequired()) {
+	if (coordinator->isAfterTrial() && coordinator->isDecisionRequired() && (coordinator->getIndexCurrentTrial() % 2 == 0) ) {
         switch (state) {
 
             case GLUT_DOWN:
