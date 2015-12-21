@@ -1,5 +1,4 @@
 #include "ExperimentCoordinator.h"
-
 #include <iostream>
 #include <fstream>
 #include <direct.h>

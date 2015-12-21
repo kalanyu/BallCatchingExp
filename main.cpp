@@ -356,7 +356,7 @@ void mouse(int button, int state, int x, int y)
                         cout << "1st is heavier." << endl;
 						coordinator->setIndexDecision(IDX_LeftButton);
 						coordinator->setFlagDecisionMade(true);
-						PlaySound(LP_Decision1WAV, NULL, SND_FILENAME | SND_SYNC);
+						PlaySound(LP_Decision1WAV, NULL, SND_FILENAME | SND_ASYNC);
 						Sleep(500);
                         break;
                     case GLUT_RIGHT_BUTTON:
