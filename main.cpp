@@ -10,6 +10,7 @@ using namespace std;
 
 #include "ControlContec.h"
 #include "World.h"
+#include "Drawable_Cylinder.h"
 #include "Drawable_Ball.h"
 #include "Drawable_Line.h"
 #include "ExperimentCoordinator.h"
@@ -52,7 +53,7 @@ static const int IDX_LeftButton  = 1;
 static const int IDX_RightButton = 2;
 
 static Timer t_obj;
-static Drawable_Ball *drawobj_ball;
+static Drawable_Cylinder *drawobj_cylinder;
 static Drawable_Line *drawobj_base;
 static Drawable_Line *drawobj_hand;
 static World *world;
@@ -83,7 +84,7 @@ static double t1ms, t2ms, dtms;
 static int counter_exitwaiting = 0;
 static const int CNT_Exit = 1000;
 
-// Exp window •`‰æŠÖ”
+// Exp window ï¿½`ï¿½ï¿½ï¿½Öï¿½
 static void initGL(int argc, char **argv);
 static void displayGL();
 static void resizeGL(int w, int h);
@@ -119,7 +120,7 @@ static void initGL(int argc, char **argv)
 	}else{
 	    glutCreateWindow(CH_WindowTitle);
 	}
-    
+
     glutDisplayFunc(displayGL);
     glutReshapeFunc(resizeGL);
 	glutKeyboardFunc(keyboard);
@@ -132,7 +133,7 @@ static void initGL(int argc, char **argv)
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, CLR_light1);
-    
+
 	if(GAMEMODE){
 		hwMain = FindWindow((LPCSTR)"GLUT",(LPCSTR)"GLUT");
 	}else{
@@ -159,32 +160,33 @@ static void displayGL()
 	vector<float> pos_ball;
     vector<float> pos_hand;
 
-	if ( coordinator->isAfterTrial() && coordinator->isDecisionRequired() ) {
+	//if ( coordinator->isAfterTrial() && coordinator->isDecisionRequired() ) {
 		glClearColor(CLR_screen_decision[0], CLR_screen_decision[1], CLR_screen_decision[2], CLR_screen_decision[3]);
-	} else {
-	    glClearColor(CLR_screen[0], CLR_screen[1], CLR_screen[2], CLR_screen[3]);
-	}
+	//} else {
+	//    glClearColor(CLR_screen[0], CLR_screen[1], CLR_screen[2], CLR_screen[3]);
+	//}
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLightfv(GL_LIGHT0, GL_POSITION, POS_light0);
     glLightfv(GL_LIGHT1, GL_POSITION, POS_light1);
-    
-    pos_ball = drawobj_ball->getPos();
+
+    pos_ball = drawobj_cylinder->getPos();
     pos_hand = drawobj_hand->getPos();
     pos_ball[1] = (float)world->getHeightBall();
-    pos_hand[1] = (float)world->getHeightHand();    
-    drawobj_ball->setPos(pos_ball);
+    pos_hand[1] = (float)world->getHeightHand();
+    drawobj_cylinder->setPos(pos_ball);
     drawobj_hand->setPos(pos_hand);
-    
+
 	if(world->isBallDisplay()){
-		drawobj_ball->draw();	
+		drawobj_cylinder->draw();
 	}
 	if(world->isHandDisplay()){
 		drawobj_hand->draw();
-	}  
+	}
 
 	drawobj_base->draw();
- 
+
+	glFlush();
     glutSwapBuffers();
 }
 
@@ -192,10 +194,10 @@ static void displayGL()
 static void resizeGL(int w, int h)
 {
 	double tmp_range_x = w*DotPitch[0]/2;
-	double tmp_range_y = h*DotPitch[1]/2;	
-    
+	double tmp_range_y = h*DotPitch[1]/2;
+
     glViewport(0, 0, w, h);
-    
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 	glOrtho(-tmp_range_x, tmp_range_x, -tmp_range_y, tmp_range_y, -1.0, 1.0);
@@ -203,48 +205,48 @@ static void resizeGL(int w, int h)
 	if(ROTATESCREEN){
 		glRotated(RotationAngle, 0.0, 0.0, -1.0);
 	}
-	
+
 	glTranslated(OriginVec[0], OriginVec[1], 0.0);
-	
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
+
 }
 
 static void initClassInstances(void)
 {
-	// ƒpƒ‰ƒ[ƒ^“Ç‚İ‚İ
+	// ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½Ç‚İï¿½ï¿½ï¿½
 	obj::msjoint = new MSJointStateShin(daqs::num_channel);
 	obj::msjoint_stiff = new MSJointStateShin(daqs::num_channel);
 
-	// 20140521C³
-	// ì£‚³‚ñ‚ÌƒLƒƒƒŠƒuƒŒ[ƒVƒ‡ƒ“‚Å‚ÍAƒgƒ‹ƒNŒë·Å¬(param_trq)‚ÆŠp“xŒë·Å¬(param_eq)‚Ì“ñ‚Â‚ğ„’è
-	
-//	string path = "parameter\\param_eq.txt";	
+	// 20140521ï¿½Cï¿½ï¿½
+	// ï¿½ì£ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒLï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Å‚ÍAï¿½gï¿½ï¿½ï¿½Nï¿½ë·ï¿½Åï¿½(param_trq)ï¿½ÆŠpï¿½xï¿½ë·ï¿½Åï¿½(param_eq)ï¿½Ì“ï¿½ï¿½Â‚ğ„’ï¿½
+
+//	string path = "parameter\\param_eq.txt";
 //	string path_stiff = "parameter\\param_trq.txt";
-	
-	
+
+
 	string path = string(FNAME_Path);
-	string path_stiff = string(FNAME_Path_Stiff);	
-	
-	
+	string path_stiff = string(FNAME_Path_Stiff);
+
+
 	if (obj::msjoint->loadParam(path) == false || obj::msjoint_stiff->loadParam(path_stiff) == false) {
-		cout << "ƒpƒ‰ƒ[ƒ^‚Ì“Ç‚İ‚İ‚É¸”s" << endl;
+		cout << "ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½Ì“Ç‚İï¿½ï¿½İ‚Éï¿½ï¿½s" << endl;
 		return;
 	}
-/*	
+/*
 	string path = "parameter\\param_trq.txt";
 	string path_stiff = "parameter\\param_trq.txt";
 	if (obj::msjoint->loadParam(path) == false || obj::msjoint_stiff->loadParam(path_stiff) == false) {
-		cout << "ƒpƒ‰ƒ[ƒ^‚Ì“Ç‚İ‚İ‚É¸”s" << endl;
+		cout << "ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^ï¿½Ì“Ç‚İï¿½ï¿½İ‚Éï¿½ï¿½s" << endl;
 		return;
 	}
 */
 	world = new World();
 
-	drawobj_ball = new Drawable_Ball();
-	drawobj_ball->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
-	drawobj_ball->setRadius(Radius_ball);
+	drawobj_cylinder = new Drawable_Cylinder();
+	drawobj_cylinder->setColor(CLR_ball[0],CLR_ball[1],CLR_ball[2]);
+	// drawobj_cylinder->setRadius(Radius_ball);
 
 	drawobj_base = new Drawable_Line();
 	drawobj_base->setColor(CLR_baseline[0],CLR_baseline[1],CLR_baseline[2]);
@@ -261,7 +263,7 @@ static void initClassInstances(void)
 	coordinator->set_Tms_after(DurationAfterTrial);
 
 	contec = new ControlContec(obj::daq, obj::msjoint, obj::msjoint_stiff);
-	
+
 }
 
 void initDaq()
@@ -343,18 +345,18 @@ static int initSPIDAR(void)
 
 void mouse(int button, int state, int x, int y)
 {
-    if (coordinator->isAfterTrial() & coordinator->isDecisionRequired()) {
+	if (coordinator->isAfterTrial() && coordinator->isDecisionRequired() && (coordinator->getIndexCurrentTrial() % 2 == 0) ) {
         switch (state) {
-                
+
             case GLUT_DOWN:
                 cout << "Decsion Made as : ";
-                
+
                 switch (button) {
                     case GLUT_LEFT_BUTTON:
                         cout << "1st is heavier." << endl;
 						coordinator->setIndexDecision(IDX_LeftButton);
 						coordinator->setFlagDecisionMade(true);
-						PlaySound(LP_Decision1WAV, NULL, SND_FILENAME | SND_SYNC);
+						PlaySound(LP_Decision1WAV, NULL, SND_FILENAME | SND_ASYNC);
 						Sleep(500);
                         break;
                     case GLUT_RIGHT_BUTTON:
@@ -368,7 +370,7 @@ void mouse(int button, int state, int x, int y)
                         break;
                 }
                 break;
-                
+
             default:
                 break;
         }
@@ -384,10 +386,10 @@ void keyboard(unsigned char key, int x, int y)
 					contec->CalibEMGMinmaxStart();
 				}else if(contec->isCalibrating()){
 					contec->CalibEMGMinmaxStop();
-				}	
+				}
 			}else{
 				if(!contec->isCalibrating()){
-					string path = "minmax\\minmax_data.txt";	
+					string path = "minmax\\minmax_data.txt";
 					contec->CalibEMGMinmaxLoad(path);
 				}
 			}
@@ -401,7 +403,7 @@ void keyboard(unsigned char key, int x, int y)
         case 'q':
 			contec->CalculateDynamicsStop();
             exit(0);
-		case '\015':	//ENTERƒL[i‚Wi”j
+		case '\015':	//ENTERï¿½Lï¿½[ï¿½iï¿½Wï¿½iï¿½ï¿½ï¿½j
 			if(!contec->isRecording() && contec->isCalibFinished()){
 				ahsActive(g_hSpi,true);
 				contec->RecordingStart();
@@ -409,9 +411,9 @@ void keyboard(unsigned char key, int x, int y)
 				ahsActive(g_hSpi,false);
 				contec->RecordingStop();
 				contec->writeDynamicsData(dirname_data);
-			}			
+			}
 			break;
-		case '\040':	//SPACEƒL[i‚Wi”j
+		case '\040':	//SPACEï¿½Lï¿½[ï¿½iï¿½Wï¿½iï¿½ï¿½ï¿½j
 			//contec->setCenterLine();
 			contec->setHandMass_as_Torque();
 			break;
@@ -454,7 +456,7 @@ static void CALLBACK MMTimerProcDraw(
 static void CALLBACK SpidarProc(DWORD dwUser)
 {
 	SPIDAR_HANDLE hSpidar = (SPIDAR_HANDLE)dwUser;
-	
+
 	//
 	// set force
 	//
@@ -471,15 +473,15 @@ static void CALLBACK SpidarProc(DWORD dwUser)
 
 void timerprocMain()
 {
-	// A : Time object‚Åæ“¾‚·‚éƒ^ƒCƒ}[(ƒ}ƒCƒNƒ‚Ü‚Å)
+	// A : Time objectï¿½Åæ“¾ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[(ï¿½}ï¿½Cï¿½Nï¿½ï¿½ï¿½Ü‚ï¿½)
 
 	//double dtms;
 	//t2ms = t_obj.getElapsedTimeInMilliSec();
 	//dtms = t2ms-t1ms;
 	//t1ms = t2ms;
-	
 
-	// B : timeGetTime()‚Åæ“¾‚·‚éƒ^ƒCƒ}[(ƒ~ƒŠ‚Ü‚Å)
+
+	// B : timeGetTime()ï¿½Åæ“¾ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[(ï¿½~ï¿½ï¿½ï¿½Ü‚ï¿½)
 
 	t2ms = timeGetTime();
 	dtms = t2ms - t1ms;
@@ -495,7 +497,7 @@ void timerprocMain()
 		}
 		contec->Caliculartion(dtms, mass, length, g_hSpi);
 	}
-	
+
 	coordinator->timerFunc(world,dtms,contec);
 
 	if(coordinator->isExperimentFinished()){
@@ -525,7 +527,7 @@ void endProc()
 	delete obj::msjoint;
 	delete obj::msjoint_stiff;
 	delete world;
-	delete drawobj_ball;
+	delete drawobj_cylinder;
 	delete drawobj_base;
 	delete drawobj_hand;
 	delete coordinator;
@@ -540,11 +542,11 @@ void endProc()
 
 int main(int argc, char **argv)
 {
-	// DAQƒ{[ƒh‚Ì‰Šú‰»
+	// DAQï¿½{ï¿½[ï¿½hï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 	initDaq();
 	initClassInstances();
 	if(flag_calib){
-		// EMGƒEƒBƒ“ƒhƒE•\¦
+		// EMGï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½\ï¿½ï¿½
 		//gluts::initWindowEMG();
 		//MMtimerIDEMGWindow = timeSetEvent(TimerT_Draw_ms,1,MMTimerProcEMGWindow,(DWORD) 0,TIME_PERIODIC);
 		//glutMainLoop();
@@ -567,16 +569,16 @@ int main(int argc, char **argv)
 
 		atexit(endProc);
 
-		// A : Time object‚Åæ“¾‚·‚éƒ^ƒCƒ}[(ƒ}ƒCƒNƒ‚Ü‚Å)
+		// A : Time objectï¿½Åæ“¾ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[(ï¿½}ï¿½Cï¿½Nï¿½ï¿½ï¿½Ü‚ï¿½)
 		//t_obj.start();
 		//t1ms = t_obj.getElapsedTimeInMilliSec();
 
-		// B : timeGetTime‚Åæ“¾‚·‚éƒ^ƒCƒ}[(ƒ~ƒŠ‚Ü‚Å)
+		// B : timeGetTimeï¿½Åæ“¾ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[(ï¿½~ï¿½ï¿½ï¿½Ü‚ï¿½)
 		t1ms = timeGetTime();
 
 		MMtimerIDMain = timeSetEvent(TimerT_Main_ms,1,MMTimerProcMain,(DWORD) 0,TIME_PERIODIC);
 		MMtimerIDDraw = timeSetEvent(TimerT_Draw_ms,1,MMTimerProcDraw,(DWORD) 0,TIME_PERIODIC);
-		
+
 		//ahsStartHapticLoop(g_hSpi);
 		glutMainLoop();
 	}
@@ -587,6 +589,3 @@ int main(int argc, char **argv)
 	return 0;
 
 }
-
-
-

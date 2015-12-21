@@ -347,7 +347,7 @@ void World::updateMuscle(ControlContec *contec)
 
 WorldState_Waiting::WorldState_Waiting()
 {
-    
+
 }
 
 
@@ -361,7 +361,7 @@ void WorldState_Waiting::step(World *world, double dtms, ControlContec *contec)
 	//
 	// set height of hand
 	//
-	
+
 	double wrist_angle;
 	if(contec->isCalicurating()){
 		wrist_angle = contec->getWristAngle();
@@ -382,7 +382,7 @@ void WorldState_Waiting::step(World *world, double dtms, ControlContec *contec)
     //
 	// store data
 	//
-    world->storeTemporalData();        
+    world->storeTemporalData();
 }
 
 
@@ -397,11 +397,11 @@ void WorldState_Waiting::determineState(World *world)
 			// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //			cout << "World transfer From StateWaiting to StateFalling." << endl;
 			// _______________________________
-		
+
 		}else{
 			world->setState(new WorldState_ConstIntervalForcePerturbation());
 			world->setFlagHandDisplay(false);
-		
+
 			// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //			cout << "World transfer From StateWaiting to StateForcePerturbation." << endl;
 			// _______________________________
@@ -419,12 +419,12 @@ void WorldState_Waiting::determineState(World *world)
 
 WorldState_Falling::WorldState_Falling()
 {
-    
+
 }
 
 
 void WorldState_Falling::step(World *world, double dtms, ControlContec *contec)
-{   
+{
 	//
 	// update current time
 	//
@@ -465,11 +465,11 @@ void WorldState_Falling::step(World *world, double dtms, ControlContec *contec)
 	// load force if condition is satisfied
 	//
 	if ( !world->isLoading() ) {
-	    if ( world->getTimeCurrent() >= 
+	    if ( world->getTimeCurrent() >=
 			world->getTimeFallOnset() + world->getTTC0() ) {
 		    world->onForce();
 			world->setFlagBallDisplay(true);
-			
+
 			// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //			cout << "In World StateFalling : Force Loading Onset !!" << endl;
 			// ------------------------------------------------------
@@ -488,10 +488,10 @@ void WorldState_Falling::determineState(World *world)
     double tmp_h_ball_bottom = world->getHeightBall() - world->getRadiusBall();
     double tmp_h_hand_top = world->getHeightHand() + world->getThickHand() / 2;
     if (tmp_h_ball_bottom <= tmp_h_hand_top) {
-        world->setHeightBall(tmp_h_hand_top + world->getRadiusBall());
+		world->setHeightBall(tmp_h_hand_top + world->getRadiusBall());
         world->setTimeContact(world->getTimeCurrent());
 		//triger->triger_on();
-        world->setState(new WorldState_Fallen());        
+        world->setState(new WorldState_Fallen());
 
 		// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //		cout << "World transfer From StateFalling to StateFallen." << endl;
@@ -507,7 +507,7 @@ void WorldState_Falling::determineState(World *world)
 
 WorldState_Fallen::WorldState_Fallen()
 {
-    
+
 }
 
 
@@ -516,7 +516,7 @@ void WorldState_Fallen::step(World *world, double dtms, ControlContec *contec)
 	//
 	// update current time
 	//
-	world->setTimeCurrent(world->getTimeCurrent()+dtms);    
+	world->setTimeCurrent(world->getTimeCurrent()+dtms);
 
 	//
 	// set height of hand
@@ -531,9 +531,9 @@ void WorldState_Fallen::step(World *world, double dtms, ControlContec *contec)
 	//
 	// set height of ball synchronized with height of hand
 	//
-    double tmp_h = world->getHeightHand() + world->getThickHand()/2 + world->getRadiusBall();
+    double tmp_h = world->getHeightHand() + world->getThickHand()/2;
     world->setHeightBall(tmp_h);
-
+	//world->setHeightBall(0.5);
 	//
 	// load force if condition is satisfied
 	//
@@ -547,7 +547,7 @@ void WorldState_Fallen::step(World *world, double dtms, ControlContec *contec)
 
 		}
 	}
-  
+
 
 	// 筋活性度の指標を更新
 	world->updateMuscle(contec);
@@ -560,18 +560,18 @@ void WorldState_Fallen::step(World *world, double dtms, ControlContec *contec)
 
 
 void WorldState_Fallen::determineState(World *world)
-{  
+{
 	double tmp_t;
 	if(world->isLoading()){
 		tmp_t = world->getTimeCurrent() - world->getTimeLoadOnset();
-		if (tmp_t>1000) {
+		if (tmp_t>3000) {
 				world->setHeightBall(1.0);
 				world->offForce();
 				world->setFlagFinished(true);
 				//triger->triger_off();
 				world->setState(new WorldState_Null());
 
-			
+
 			// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //			cout << "World transfer From StateFallen to StateNull." << endl;
 			// _______________________________
@@ -589,7 +589,7 @@ void WorldState_Fallen::determineState(World *world)
 
 WorldState_CountingForcePerturbation::WorldState_CountingForcePerturbation()
 {
-    
+
 }
 
 void WorldState_CountingForcePerturbation::step(World *world, double dtms, SPIDAR_HANDLE hSpidar)
@@ -631,7 +631,7 @@ void WorldState_CountingForcePerturbation::step(World *world, double dtms, SPIDA
 	if(tmp_idx<=Nbeep && tmp_t>=Interval_beep*tmp_idx){
 		Beep(Freq_beep[tmp_idx-1],Duration_beep[tmp_idx-1]);
 		world->setIDXbeep(tmp_idx+1);
-	}	
+	}
 
     //
 	// store data
@@ -647,7 +647,7 @@ void WorldState_CountingForcePerturbation::determineState(World *world)
 		world->offForce();
 		world->setFlagFinished(true);
 		world->setState(new WorldState_Null());
-	
+
 		// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //		cout << "World transfer From StateCountingForcePerturbation to StateNull." << endl;
 		// _______________________________
@@ -694,7 +694,6 @@ void WorldState_ConstIntervalForcePerturbation::step(World *world, double dtms, 
 	if(!world->isLoading() && tmp_t>=Interval_force){
 			world->onForce();
 	}
-
 	// 筋活性度の指標を更新
 	world->updateMuscle(contec);
 
@@ -715,7 +714,7 @@ void WorldState_ConstIntervalForcePerturbation::determineState(World *world)
 		world->setFlagHandDisplay(true);
 		world->setFlagFinished(true);
 		world->setState(new WorldState_Null());
-	
+
 		// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //		cout << "World transfer From StateConstIntervalForcePerturbation to StateNull." << endl;
 		// _______________________________
@@ -733,7 +732,7 @@ void WorldState_ConstIntervalForcePerturbation::determineState(World *world)
 
 WorldState_Null::WorldState_Null()
 {
-    
+
 }
 
 void WorldState_Null::step(World *world, double dtms, ControlContec *contec)
@@ -749,7 +748,7 @@ void WorldState_Null::step(World *world, double dtms, ControlContec *contec)
 	}
 	//cout << "angle is " << wrist_angle << endl;
 	world->setHeightHand_by_angle(wrist_angle);
-	
+
 	//world->setHeightHand(0)/1000;
 
 	//cout << s/pi_pos[0] << " " << spi_pos[1] << " " << spi_pos[2] << endl;

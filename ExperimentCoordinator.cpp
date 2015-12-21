@@ -1,10 +1,10 @@
 #include "ExperimentCoordinator.h"
-
 #include <iostream>
 #include <fstream>
 #include <direct.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string>
 using namespace std;
 
 
@@ -35,7 +35,7 @@ int ExperimentCoordinator::readTrialCondition(char *fname)
 	double tmp_d;
 
 	ifstream fin(fname);
-	if(!fin) { 
+	if(!fin) {
 		cout << "Cannot Open " << fname << " file !!" << endl;
 		return -1;
 	}
@@ -84,7 +84,7 @@ int ExperimentCoordinator::readTrialCondition(char *fname)
 	Ntrial = cnt_Ntrial;
 
 	fin.close();
-	
+
 	return 0;
 }
 
@@ -106,7 +106,7 @@ int ExperimentCoordinator::setDataFileInfo(char *dirname, char *fname_exp, char 
 		}
 		return -1;
 	}
-	
+
 	return 0;
 }
 
@@ -280,10 +280,10 @@ void ExperimentCoordinator::startTrial(World *world, ControlContec *contec)
 	this->set_tms_before(0);
 	this->set_tms_after(0);
 	if(1){
-		this->setFlagDecisionRequired(false);
+		this->setFlagDecisionRequired(true);
 		this->setIndexDecision(0);
 	}else{
-		this->setFlagDecisionRequired(true);
+		this->setFlagDecisionRequired(false);
 	}
 	this->set_tms_before(0);
 	this->set_tms_after(0);
@@ -319,7 +319,7 @@ int ExperimentCoordinator::writeTrialData(World *world)
 	int i,j;
 	char tmp_fname[200];
 	vector< vector<double> > tmp_data;
-	
+
 	tmp_data = world->getTemporalData();
 
 	trialInfo current_trial = trials[IDXtrial-1];
@@ -342,10 +342,13 @@ int ExperimentCoordinator::writeTrialData(World *world)
         }
         fout << endl;
     }
+		if (this->isDecisionMade() && this->isDecisionRequired()) {
+			fout << this->getIndexDecision() << endl;
+		}
     fout.close();
 
 	//
-	// store trial data 
+	// store trial data
 	//
     sprintf_s(tmp_fname, "%s/%s", ch_directory, ch_experiment);
     ofstream fout_exp(tmp_fname,ios::app);
@@ -363,7 +366,7 @@ int ExperimentCoordinator::writeTrialData(World *world)
     fout_exp << current_trial.tms_contact << " ";
     fout_exp << current_trial.tms_load << " ";
     fout_exp << endl;
-    
+
     fout_exp.close();
 
 	return 0;
@@ -428,7 +431,7 @@ void ExperimentState_BeforeTrial::determineState(ExperimentCoordinator *coordina
 // ExperimentState_DuringTrial
 // --------------------------------------------------------
 ExperimentState_DuringTrial::ExperimentState_DuringTrial()
-{	
+{
 }
 
 void ExperimentState_DuringTrial::timerFunc(ExperimentCoordinator *coordinator, World *world, double dtms, ControlContec *contec)
@@ -453,7 +456,7 @@ void ExperimentState_DuringTrial::determineState(ExperimentCoordinator *coordina
 // --------------------------------------------------------
 ExperimentState_AfterTrial::ExperimentState_AfterTrial()
 {
-	
+
 }
 
 void ExperimentState_AfterTrial::timerFunc(ExperimentCoordinator *coordinator, World *world, double dtms, ControlContec *contec)
@@ -468,17 +471,21 @@ void ExperimentState_AfterTrial::determineState(ExperimentCoordinator *coordinat
 		if(contec->isCalicurating()){
 			contec->CalculateDynamicsStop();
 		}
-		if( !coordinator->isDecisionRequired() || coordinator->isDecisionMade() ) {
+		if( !coordinator->isDecisionRequired() || (coordinator->isDecisionMade() || (coordinator->getIndexCurrentTrial() %2 != 0)) ) {
 			coordinator->writeTrialData(world);
 			if( coordinator->getIndexCurrentTrial() == coordinator->getTotalTrialNumber() ) {	// end of experiment
 				coordinator->setFlagAfterTrial(false);
 				coordinator->setFlagExperimentFinished(true);
 				world->offForce();
 				coordinator->setStateNull();
-			}else{																				// go to next trial
+			}else{
+				// go to next trial
 				coordinator->setIndexCurrentTrial(coordinator->getIndexCurrentTrial()+1);
 				coordinator->setFlagAfterTrial(false);
 				coordinator->startTrial(world, contec);
+
+
+				//sprintf_s(fname_condition, "%s", tmp_str.c_str());
 			}
 		}
 	}
@@ -491,7 +498,7 @@ void ExperimentState_AfterTrial::determineState(ExperimentCoordinator *coordinat
 // --------------------------------------------------------
 ExperimentState_Null::ExperimentState_Null()
 {
-	
+
 }
 
 void ExperimentState_Null::timerFunc(ExperimentCoordinator *coordinator, World *world, double dtms, ControlContec *contec)
